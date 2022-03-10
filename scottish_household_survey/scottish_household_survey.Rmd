@@ -1,0 +1,63 @@
+---
+title: ' '
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = 'center')
+```
+
+<br>
+
+<br>
+
+```{r, echo = FALSE, out.width= '50%'}
+knitr::include_graphics("images/scot_gov.png")
+```
+
+<br><br>
+
+# What is the Scottish Household Survey  
+
+<br>
+
+The Scottish Household Survey (SHS) is a continuous survey based on a random sample of the general population in private residences in Scotland. It is important in helping us make representative estimates both at Scotland, as well as at local-authority level. The survey started in 1999 and covers a wide range of topics to allow links to be made between different policy areas.  
+
+The survey provides robust evidence on the composition, characteristics, attitudes and behaviour of private households and individuals as well as evidence on the physical condition of Scotland’s homes. The large scale of the SHS enables everyone using the survey findings to obtain a robust deeper understanding of issues by being able to analyse across key demographic household characteristics such as deprivation, age, income, gender, rurality, ethnicity and other equalities. This is crucial to informing the Fairer Scotland agenda, National Performance Framework and feeds in to the Scottish Surveys Core Questions (SSCQ) sample.
+
+
+<br> 
+
+
+
+# The Data
+
+[Distance to Green or Blue Space - Scottish Household Survey](https://statistics.gov.scot/resource?uri=http%3A%2F%2Fstatistics.gov.scot%2Fdata%2Fgreen-or-blue-space-shs)  
+
+[Neighbourhood rating - Scottish Household Survey](https://statistics.gov.scot/resource?uri=http%3A%2F%2Fstatistics.gov.scot%2Fdata%2Fneighbourhood-rating---shs)  
+
+[Community Belonging - Scottish Household Survey](https://statistics.gov.scot/resource?uri=http%3A%2F%2Fstatistics.gov.scot%2Fdata%2Fcommunity-belonging---shs)  
+
+[You can find a lot more data at this webpage, that you may find useful to incorporate into your analysis](https://statistics.gov.scot/resource?uri=http%3A%2F%2Fstatistics.gov.scot%2Fdef%2Fconcept%2Ffolders%2Fthemes%2Fcommunity-wellbeing-and-social-environment)  
+
+<br><br>
+
+# General Questions
+
+We would like to to help us gain insights into how people feel about their local communities in Scotland. In particular, we are interested in the relationship between distance to outdoor space, and neighbourhood ratings. 
+
+* Are there certain groups that have local access to green space? 
+* Are there groups that are lacking access?
+* What there big differences in how far people have to walk to access their green space? 
+* Are there any differences between rural and urban areas?
+* How do people in neighbourhoods with good access to green space differ from those who have no good access? Are there differences in how they rate their neighbourhoods? Are there differences in how they rate their communities? 
+* Is there any way to predict which households would have higher ratings?  
+
+<br><br>
+
+
+```{r, echo = FALSE, out.width= '50%'}
+knitr::include_graphics("images/shs.png")
+```

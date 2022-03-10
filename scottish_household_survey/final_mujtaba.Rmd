@@ -1,0 +1,210 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+# this is the beging of my final project :- scottish household survey
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(dplyr)
+
+```
+
+
+```{r}
+library(readr)
+community_belonging <- read_csv("data/community_belonging.csv") %>% clean_names()
+
+```
+
+```{r}
+head(community_belonging)
+```
+
+```{r}
+community_belonging %>% 
+  filter(is.na(gender))
+```
+
+```{r}
+community_belonging %>%
+  summarise(count = sum(is.na(community_belonging)))
+```
+
+
+
+```{r}
+green_spaces <- read_csv("data/green_spaces.csv") %>% clean_names()
+```
+
+```{r}
+head(green_spaces)
+```
+
+
+```{r}
+green_distan <- green_spaces  %>% 
+  mutate(d = case_when(
+    str_detect(distance_to_nearest_green_or_blue_space, "d1") ~ "A 5 minute walk or less",
+    str_detect(distance_to_nearest_green_or_blue_space, "d2") ~ "Within a 6-10 minute walk",
+    str_detect(distance_to_nearest_green_or_blue_space, "d3") ~ "An 11 minute walk or more",
+    str_detect(distance_to_nearest_green_or_blue_space, "d4") ~ "Don't Know"
+  ))
+```
+
+```{r}
+green_distan %>% 
+    group_by(distance_to_nearest_green_or_blue_space) %>% 
+  mutate(avg_expected_walk = mean(value)) %>% 
+  ggplot(aes(x = distance_to_nearest_green_or_blue_space, y = avg_expected_walk)) +
+      geom_col(group = 1, colour = "steelblue") + 
+      geom_point(colour = "steelblue") 
+      
+```
+```{r}
+green_distan %>% 
+    group_by(gender) %>% 
+  summarise(avg_expected_walk = mean(value)) %>% 
+  ggplot(aes(x = gender, y = avg_expected_walk)) +
+      geom_col(group = 1, colour = "steelblue") + 
+      geom_point(colour = "steelblue") 
+```
+
+```{r}
+green_distan %>% 
+    group_by(household_type) %>% 
+  summarise(gender = mean(value)) %>% 
+  ggplot(aes(x = household_type, y = gender)) +
+      geom_col(group = 1, colour = "steelblue") + 
+      geom_point(colour = "steelblue") 
+```
+```{r}
+green_distan  %>% 
+  group_by(distance_to_nearest_green_or_blue_space, date_code) %>% 
+  summarise(mean_values = mean(value)) 
+```
+```{r}
+green_distan  %>% 
+  group_by(distance_to_nearest_green_or_blue_space, date_code) %>% 
+  summarise(sum_values = sum(value)) %>% 
+  ggplot(aes(x = distance_to_nearest_green_or_blue_space, y = date_code)) +
+      geom_col(group = 1, colour = "steelblue") + 
+      geom_point(colour = "steelblue") 
+```
+```{r}
+green_distan  %>%
+```
+
+
+```{r}
+green_distan %>% 
+group_by(date_code) %>% 
+  summarise(mean_measurment = mean(value)) %>% 
+  ggplot(aes(x = date_code, y = mean_measurment)) +
+      geom_col(group = 1, colour = "steelblue") + 
+      geom_point(colour = "steelblue") +
+
+
+scale_y_continuous(limits = c(0, 100),
+                         labels = scales::percent_format(scale = 1)) +
+      labs(
+        x = "year",
+        y = "persentg%"
+      ) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.text = element_text(size = 6),
+            axis.title = element_text(size = 8, colour = "grey15"))
+    
+  )
+```
+
+```{r}
+green <- green_distan %>% 
+  select(date_code,distance_to_nearest_green_or_blue_space,value,age,gender,urban_rural_classification) 
+ head(green)
+```
+```{r}
+ggplot(green) +
+  geom_col(aes(x = date_code,y= value, fill = urban_rural_classification), position =  "dodge")
+```
+
+
+```{r}
+ggplot(green) +
+  aes(x = gender , fill = urban_rural_classification) +
+  scale_fill_manual(values=c('#E69F00', '#56B4E9')) +
+  geom_histogram(bins = 20, col = "white", show.legend = FALSE) + 
+  theme_light() + 
+  labs(y = "date_code", x = "value") + 
+  facet_wrap(~ gender, nrow = 2)
+
+```
+```{r}
+green_sp <- green_distan %>% 
+  group_by(distance_to_nearest_green_or_blue_space, urban_rural_classification) %>% 
+  summarise(counts = n())
+```
+```{r}
+ggplot(green_sp) +
+  geom_bar(aes(x = distance_to_nearest_green_or_blue_space , y = counts, fill = urban_rural_classification), stat = "identity")
+```
+```{r}
+  ggplot(green_sp) +
+  geom_bar(aes(x = urban_rural_classification, y = counts), fill = "gold", stat = "identity")
+```
+
+```{r}
+ ggplot(green_sp) +
+  geom_bar(aes(x = distance_to_nearest_green_or_blue_space, y = counts), fill = "blue", stat = "identity")
+```
+
+
+```{r}
+green_year <- green_distan %>% 
+  group_by(date_code) %>% 
+  summarise(counts = n())
+ggplot(green_year) +
+  geom_bar(aes(x = date_code, y = counts), fill = "blue", stat = "identity")
+```
+```{r}
+green %>%
+  filter(date_code == "2013")
+ggplot(green) +
+  geom_bar(aes(x = date_code, y = urban_rural_classification), fill = "blue", stat = "identity")
+```
+
+```{r}
+green$date_code <- as.integer(format(green$date_code, "%Y"))
+```
+
+```{r}
+green_year <- green_distan %>% 
+  group_by(distance_to_nearest_green_or_blue_space) %>% 
+  summarise(counts = n())
+```
+
+```{r}
+ggplot(green_year) +
+  geom_bar(aes(x = distance_to_nearest_green_or_blue_space, y = counts), fill = "blue", stat = "identity")+
+  coord_flip()
+```
+```{r}
+green %>%
+  select(date_code, value) %>%
+  group_by(date_code) %>%
+  summarise(mean_value = mean(value))
+
+ggplot(green) +
+  geom_bar(aes(x = date_code, y = value), fill = "blue", stat = "identity")
+```
+
+```{r}
+neighbourhood_rating <- read_csv("data/neighbourhood_rating.csv") %>% clean_names()
+```
+
+```{r}
+ head(neighbourhood_rating)
+```
+
