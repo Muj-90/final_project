@@ -1,0 +1,350 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(readr)
+neighbourhood_rating <- read_csv("data/neighbourhood_rating.csv") %>% clean_names()
+View(neighbourhood_rating)
+```
+
+```{r}
+green_spaces %>% 
+  glimpse()
+
+```
+
+```{r}
+community_belonging %>% 
+  glimpse()
+
+```
+
+```{r}
+neighbourhood_rating %>% 
+
+  glimpse()
+
+```
+
+
+
+
+
+#1  iwill try to compine all dataset together
+# gerrn speace
+```{r}
+green_f_code <-
+green_spaces %>% 
+  distinct(feature_code)
+green_f_code
+green_spaces %>% 
+  distinct(units)
+```
+
+#neighbourhood
+```{r}
+neighbourhood_feat <- neighbourhood_rating %>% 
+distinct(feature_code)
+
+neighbourhood_feat
+
+```
+
+```{r}
+neighbourhood_rating %>% 
+  distinct(units)
+```
+# the same to the community dateset
+
+```{r}
+community_feach <- community_belonging %>% 
+  distinct(feature_code)
+community_belonging %>% 
+  distinct(units)
+```
+
+
+```{r}
+community_feach 
+neighbourhood_feat
+green_f_code
+```
+#the 3 dateset has the same varble number 
+#try to see if the ary equal 
+
+```{r}
+all_equal(green_f_code, neighbourhood_feat, community_feach )
+```
+```{r}
+full_join(green_f_code, neighbourhood_feat, community_feach,"feature_code" )
+```
+#join tow date set together
+
+```{r}
+green_neighbour <-
+full_join(green_spaces, neighbourhood_feat,"feature_code")
+```
+
+```{r}
+green_neighbour
+```
+#add new feachwe code colmun  (authority S92000003 = Sctland)
+```{r}
+green_neighbour<-
+green_neighbour %>% 
+  mutate(authority  = "S92000003")
+green_neighbour 
+```
+
+```{r}
+green_neighbour <-
+ green_neighbour %>% 
+  arrange(feature_code)
+```
+
+
+
+#join the date set together 
+```{r}
+neighb<-
+  full_join(neighbourhood_rating, green_neighbourhood, "feature_code")
+```
+#add new colmn year to look at the date in deifrnt years 
+```{r}
+neighbourhood_rating<-
+neighbourhood_rating %>% 
+  mutate(year  = "2019")
+neighbourhood_rating
+```
+
+```{r}
+all_equal(neighbourhood_rating,green_neighbour)
+```
+
+```{r}
+neighbourhood_rating<-
+neighbourhood_rating %>% 
+  mutate(year  = "2019")
+neighbourhood_rating
+```
+
+```{r}
+all_equal(neighbourhood_rating,green_neighbourhood)
+```
+
+
+
+
+```{r}
+neighb<-
+  full_join(neighbourhood_rating, green_neighbour, "feature_code")
+```
+
+```{r}
+com <-
+  full_join(community_belonging, green_neighbourhood, "feature_code")
+```
+
+```{r}
+all_equal(,neighbourhood_rating)
+```
+
+```{r}
+community_belo<-
+community_belonging %>% 
+  mutate(year  = "2019")
+neighbourhood_rating
+```
+
+#community
+#the date cant joinging  to  mne becuse of they are not the same dim
+```{r}
+ommun <-
+full_join(community_belonging, green_neighbour, "authority ")
+
+```
+```{r}
+community_belonging <-
+community_belonging %>% 
+mutate(authority  = "S92000003")
+community_belonging
+```
+```{r}
+ommun <-
+full_join(community_belonging, green_neighbour, "feature_code")
+
+```
+#is they any missing value?
+```{r}
+green_neighbour%>% 
+summarise(across(.fns = ~sum(is.na(.x))))
+
+```
+
+```{r}
+green_spaces%>% 
+summarise(across(.fns = ~sum(is.na(.x))))
+
+```
+#i did not found any NA
+
+# filter coulmn measurement to use it in the feutcuer 
+```{r}
+green <-
+green_neighbour%>%
+  filter(measurement == "Percent") %>% 
+  select(-c(units, measurement))
+```
+
+```{r}
+community <-
+community_belonging%>%
+  filter(measurement == "Percent") %>% 
+  select(-c(units, measurement))
+```
+
+```{r}
+neighbour <-
+neighbourhood_rating %>%
+  filter(measurement == "Percent") %>% 
+  select(-c(units, measurement))
+```
+
+# povit wider to see the value 
+```{r}
+green %>% 
+  pivot_wider(names_from = distance_to_nearest_green_or_blue_space,
+              values_from = value)
+```
+
+
+```{r}
+neighbour %>% 
+  distinct(household_type) 
+```
+
+```{r}
+neighbour %>% 
+  distinct(walking_distance_to_nearest_greenspace)
+```
+
+```{r}
+green_clean <-
+green %>% 
+  pivot_wider(names_from = distance_to_nearest_green_or_blue_space,
+              values_from = value) %>% 
+  clean_names()
+```
+
+#tack year 2019  as group
+```{r}
+green_2019 <-
+green %>%
+  filter(feature_code== "S92000003",
+         date_code == 2019)
+
+```
+
+```{r}
+green_2019 <-
+green_clean %>%
+  filter(feature_code== "S92000003",
+         date_code == 2019)
+```
+
+```{r}
+green_2019
+```
+
+```{r}
+
+  ggplot(green_2019) +
+  geom_col(aes(x = distance_to_nearest_green_or_blue_space,y=  , fill = urban_rural_classification), position =  "dodge")
+  
+```
+
+```{r}
+green_all <-
+green_2019 %>% 
+  filter(age == "All", 
+         gender == "All",
+         urban_rural_classification == "All",
+         simd_quintiles == "All",
+         type_of_tenure == "All",
+         household_type == "All",
+         ethnicity == "All") %>% 
+  arrange(authority, date_code)
+green_all
+```
+
+```{r}
+ggplot(green_all) +
+  geom_col(aes(x = date_code,y= value , fill = distance_to_nearest_green_or_blue_space), position =  "dodge")
+```
+```{r}
+ggplot(green_2019) +
+  aes(x =urban_rural_classification, y =distance_to_nearest_green_or_blue_space, fill = value) +
+  geom_col(position = "dodge") 
+ 
+```
+```{r}
+ggplot(green_all) +
+  aes(x = date_code, y =value, fill = urban_rural_classification) +
+  geom_col(position = "dodge") +
+  coord_flip()
+```
+
+
+```{r}
+```
+
+```{r}
+green_spaces %>% 
+    filter(age == "All", 
+         gender == "All",
+         urban_rural_classification == "All",
+         simd_quintiles == "All",
+         type_of_tenure == "All",
+         household_type == "All",
+         ethnicity == "All",
+         measurement == "Percent") %>% 
+arrange(feature_code, date_code)
+
+
+```
+
+
+
+#filter it by scotland code 
+
+```{r}
+green_2018 <-
+green %>%
+  filter(feature_code== "S92000003",
+         date_code == 2018)
+```
+
+```{r}
+green_all_2018 <-
+green_2018 %>% 
+  filter(age == "All", 
+         gender == "All",
+         urban_rural_classification == "All",
+         simd_quintiles == "All",
+         type_of_tenure == "All",
+         household_type == "All",
+         ethnicity == "All") %>% 
+  arrange(authority, date_code)
+
+ggplot(green_all_2018) +
+  geom_col(aes(x = date_code,y= value , fill = distance_to_nearest_green_or_blue_space), position =  "dodge")
+green_all_2018
+```
+
+```{r}
+green_all_2018
+```
+
